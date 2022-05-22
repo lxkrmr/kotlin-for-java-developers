@@ -23,17 +23,15 @@ fun String.isNice(): Boolean {
 }
 
 fun String.doesNotContainSubstring(): Boolean {
-    return listOf("bu", "ba", "be").none { it in this }
+    return setOf("bu", "ba", "be").none { it in this }
 }
 
 fun String.containsAtLeastThreeVowels(): Boolean {
-    return this.count { it in listOf('a', 'e', 'i', 'o', 'u') } >= 3
+    return this.count { it in setOf('a', 'e', 'i', 'o', 'u') } >= 3
 }
 
 fun String.containsADoubleLetter(): Boolean {
-    for(index in 0 until this.length) {
-        if (this.getOrNull(index) == this.getOrNull(index + 1)) return true
-    }
-
-    return false
+    return this.zipWithNext().any { it.first == it.second }
+    // alternative
+    // this.windowed(2).any { it[0] == it[1] }
 }
