@@ -1,3 +1,5 @@
+import java.math.BigInteger
+
 data class Rational private constructor(val numerator: Int, val denominator: Int) {
     companion object {
         fun create(numerator: Int, denominator: Int): Rational {
@@ -10,8 +12,8 @@ data class Rational private constructor(val numerator: Int, val denominator: Int
 }
 
 operator fun Rational?.plus(other: Rational?): Rational {
-    val thisOrFallback = this ?: Rational.create(0, 0)
-    val otherOrFallback = other ?: Rational.create(0, 0)
+    val thisOrFallback = this.orDefault()
+    val otherOrFallback = other.orDefault()
     val thisWithCommonDenominator = Rational.create(
         thisOrFallback.numerator * otherOrFallback.denominator,
         thisOrFallback.denominator * otherOrFallback.denominator
@@ -27,8 +29,8 @@ operator fun Rational?.plus(other: Rational?): Rational {
 }
 
 operator fun Rational?.minus(other: Rational?): Rational {
-    val thisOrFallback = this ?: Rational.create(0, 0)
-    val otherOrFallback = other ?: Rational.create(0, 0)
+    val thisOrFallback = this.orDefault()
+    val otherOrFallback = other.orDefault()
     val thisWithCommonDenominator = Rational.create(
         thisOrFallback.numerator * otherOrFallback.denominator,
         thisOrFallback.denominator * otherOrFallback.denominator
@@ -44,8 +46,8 @@ operator fun Rational?.minus(other: Rational?): Rational {
 }
 
 operator fun Rational?.times(other: Rational?): Rational {
-    val thisOrFallback = this ?: Rational.create(0, 0)
-    val otherOrFallback = other ?: Rational.create(0, 0)
+    val thisOrFallback = this.orDefault()
+    val otherOrFallback = other.orDefault()
     return Rational.create(
         thisOrFallback.numerator * otherOrFallback.numerator,
         thisOrFallback.denominator * otherOrFallback.denominator
@@ -53,8 +55,8 @@ operator fun Rational?.times(other: Rational?): Rational {
 }
 
 operator fun Rational?.div(other: Rational?): Rational {
-    val thisOrFallback = this ?: Rational.create(0, 0)
-    val otherOrFallback = other ?: Rational.create(0, 0)
+    val thisOrFallback = this.orDefault()
+    val otherOrFallback = other.orDefault()
     return Rational.create(
         thisOrFallback.numerator * otherOrFallback.denominator,
         thisOrFallback.denominator * otherOrFallback.numerator
@@ -67,8 +69,14 @@ infix fun Int.divBy(denominator: Int): Rational {
     return Rational.create(this, denominator)
 }
 
+fun Rational?.orDefault(): Rational = this ?: Rational.create(0, 0)
+
 
 fun main() {
+    -1 divBy 3 eq -(1 divBy 3)
+    1 divBy -3 eq -(1 divBy 3)
+    -1 divBy -3 eq -(1 divBy 3)
+
     val oneHalf = Rational.create(1, 2)
     val oneThird = 1 divBy 3
 
@@ -77,4 +85,9 @@ fun main() {
     oneThird - oneHalf eq -(1 divBy 6) // 1/3 - 1/2 = 2/6 - 3/6 = -(1/6)
     oneHalf * oneThird eq (1 divBy 6) // 1/2 * 1/3 = 1/6
     oneHalf / oneThird eq (3 divBy 2) // 1/2 / 1/3 = 3/2 = 1 1/2
+
+    val bar = (1..117).filter { 1098 % it == 0 }
+    val baz = (1..117).filter { 117 % it == 0 }
+    println(bar)
+    println(baz)
 }
