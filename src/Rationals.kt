@@ -1,5 +1,3 @@
-import java.math.BigInteger
-
 data class Rational private constructor(val numerator: Int, val denominator: Int) {
     companion object {
         fun create(numerator: Int, denominator: Int): Rational {
@@ -8,6 +6,11 @@ data class Rational private constructor(val numerator: Int, val denominator: Int
 
             return Rational(checkedNumerator, checkedDenominator)
         }
+    }
+
+    override fun toString(): String {
+        val denominatorWithoutSign = if (denominator < 0) -denominator else denominator
+        return if (denominatorWithoutSign == 1) "$numerator" else "$numerator/$denominatorWithoutSign"
     }
 }
 
@@ -65,17 +68,34 @@ operator fun Rational?.div(other: Rational?): Rational {
 
 operator fun Rational.unaryMinus() = Rational.create(-numerator, -denominator)
 
+fun Rational?.orDefault(): Rational = this ?: Rational.create(0, 0)
+
 infix fun Int.divBy(denominator: Int): Rational {
     return Rational.create(this, denominator)
 }
 
-fun Rational?.orDefault(): Rational = this ?: Rational.create(0, 0)
+fun String.toRational(): Rational {
+    val split = this.split("/")
+    val numerator = split.getOrNull(0)?.toIntOrNull() ?: throw IllegalArgumentException("Illegal numerator: $this")
+    val denominator = split.getOrNull(1)?.toIntOrNull() ?: 1
+    return Rational.create(numerator, denominator)
+}
 
 
 fun main() {
     -1 divBy 3 eq -(1 divBy 3)
     1 divBy -3 eq -(1 divBy 3)
     -1 divBy -3 eq -(1 divBy 3)
+
+    "1/3".toRational() eq (1 divBy 3)
+    "-1/3".toRational() eq -(1 divBy 3)
+    "1/-3".toRational() eq -(1 divBy 3)
+    "23".toRational() eq (23 divBy 1)
+
+    println("1/3".toRational())
+    println("-1/3".toRational())
+    println("1/-3".toRational())
+    println("23".toRational())
 
     val oneHalf = Rational.create(1, 2)
     val oneThird = 1 divBy 3
@@ -90,4 +110,9 @@ fun main() {
     val baz = (1..117).filter { 117 % it == 0 }
     println(bar)
     println(baz)
+
+    val split = "-1/7".split("/")
+    val n = split.get(0).toIntOrNull()
+    val d = split.getOrElse(1) { 1 }
+    println("n $n and d $d")
 }
