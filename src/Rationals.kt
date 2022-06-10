@@ -1,6 +1,9 @@
 data class Rational private constructor(val numerator: Int, val denominator: Int) {
     companion object {
         fun create(numerator: Int, denominator: Int): Rational {
+            if(denominator == 0) {
+                throw IllegalArgumentException("Denominator can't be 0")
+            }
             val checkedNumerator = if (numerator > 0 && denominator < 0) -numerator else numerator
             val checkedDenominator = if (numerator < 0 && denominator > 0) -denominator else denominator
 
@@ -83,6 +86,12 @@ fun String.toRational(): Rational {
 
 
 fun main() {
+    try {
+        1 divBy 0
+    } catch (e: IllegalArgumentException) {
+            e.message eq "Denominator can't be 0"
+    }
+
     -1 divBy 3 eq -(1 divBy 3)
     1 divBy -3 eq -(1 divBy 3)
     -1 divBy -3 eq -(1 divBy 3)
